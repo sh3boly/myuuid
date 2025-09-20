@@ -1,8 +1,6 @@
 use pyo3::prelude::*;
-use std::fmt::format;
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::Rng;
-use uuid::Uuid;
 
 #[pyclass]
 struct MyUuid([u8; 16]);
@@ -49,37 +47,31 @@ fn uuid_rust(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     Ok(())
 }
 
-// fn main() {
-        
-//     let my_uuid = MyUuid::new_v4();
-//     let external_uuid = Uuid::new_v4();
-//     let my_uuid_string = my_uuid.to_string();
-//     println!("My UUID {}", my_uuid_string);
-//     println!("External UUID: {}", external_uuid);
-//     let parsed = Uuid::parse_str(&my_uuid_string).unwrap();
-//     println!("Version: {:?}", parsed.get_version()); // Some(Random)
-//     println!("Variant: {:?}", parsed.get_variant()); // Rfc4122
-//     let parsed = Uuid::parse_str(&external_uuid.to_string()).unwrap();
-//     println!("Version: {:?}", parsed.get_version()); // Some(Random)
-//     println!("Variant: {:?}", parsed.get_variant()); // Rfc4122
 
+#[cfg(test)]
+mod tests {
 
-//     // UUIDv7 Validation
-//     
+    use super::*;
+    use uuid::{Uuid, Version, Variant};
 
-//     let my_uuid = MyUuid::new_v7(&now);
-//     let external_uuid = Uuid::now_v7();
-//     let my_uuid_string = my_uuid.to_string();
+    #[test]
+    fn test_uuid_v4_is_valid(){
+        let my_uuid = MyUuid::new_v4();
+        let s = my_uuid.to_string();
 
-//     println!("My UUID {}", my_uuid_string);
-//     println!("External UUID: {}", external_uuid);
+        let parsed = Uuid::parse_str(&s).unwrap();
 
-     
-//     let parsed = Uuid::parse_str(&my_uuid_string).unwrap();
-//     println!("My UUID - Version: {:?}, Variant: {:?}", parsed.get_version(), parsed.get_variant());
+        assert_eq!(parsed.get_version(), Some(Version::Random));
+        assert_eq!(parsed.get_variant(), Variant::RFC4122);
+    }
+    #[test]
+    fn test_uuid_v7_is_valid(){
+        let my_uuid = MyUuid::new_v7();
+        let s = my_uuid.to_string();
 
+        let parsed = Uuid::parse_str(&s).unwrap();
 
-//     let parsed_ext = Uuid::parse_str(&external_uuid.to_string()).unwrap();
-//     println!("External UUID - Version: {:?}, Variant: {:?}", parsed_ext.get_version(), parsed_ext.get_variant());
-// }
-
+        assert_eq!(parsed.get_version(), Some(Version::SortRand));
+        assert_eq!(parsed.get_variant(), Variant::RFC4122);
+    }
+}
