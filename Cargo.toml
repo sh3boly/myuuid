@@ -1,0 +1,15 @@
+[package]
+name = "myuuid"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "uuid_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = "0.26.0"
+rand = "0.9.2"
+unix-ts = "1.0.0"
+uuid = { version = "1.18.1", features = ["v4", "v7", "rng"]}
