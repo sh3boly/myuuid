@@ -3,11 +3,11 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use rand::Rng;
 
 #[pyclass]
-struct MyUuid([u8; 16]);
+pub struct MyUuid([u8; 16]);
 #[pymethods]
 impl MyUuid {
     #[new]
-    fn new_v4() -> Self {
+    pub fn new_v4() -> Self {
         let mut rng = rand::rng();
         let mut bytes = [0u8; 16];
         rng.fill(&mut bytes);
@@ -16,7 +16,7 @@ impl MyUuid {
         MyUuid(bytes)
     }
     #[staticmethod]
-    fn new_v7() -> Self {
+    pub fn new_v7() -> Self {
         let now = SystemTime::now();
         let mut rng = rand::rng();
         let mut bytes = [0u8; 16];
@@ -28,7 +28,7 @@ impl MyUuid {
         bytes[8] = (bytes[8] & 0x3F) | 0x80;
         MyUuid(bytes)
     }
-    fn to_string(&self) -> String {
+    pub fn to_string(&self) -> String {
         let b = &self.0;
         format!(
             "{:02x}{:02x}{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
@@ -53,7 +53,6 @@ mod tests {
 
     use super::*;
     use uuid::{Uuid, Version, Variant};
-
     #[test]
     fn test_uuid_v4_is_valid(){
         let my_uuid = MyUuid::new_v4();
